@@ -1,19 +1,20 @@
 # Project Overview
 
-This repository contains implementations for polyp segmentation experiments
-based on the PraNet family (Res2Net backbone). Its primary contribution is an
-HNN (Hippocampal Neural Network) style continual-learning mechanism that
-combines Elastic Weight Consolidation (EWC) with a decayed Fisher aggregation
-(referred to in-code as `cognitiva_map_HNN`) to encode task order and importance.
-The codebase also includes training scripts, evaluation tools, dataset loaders
-and several model variants used in experiments.
+This repository implements PraNet-based polyp segmentation and introduces an
+Hippocampal Neural Network (HNN) continual-learning mechanism inspired by a
+Mott-VO2 hippocampus circuit. The code and algorithms were developed together
+with the hardware concept so that temporal device primitives (time-constants,
+selective decay, and continuous integration of inputs) are reflected in data
+flow, stored artifacts, and the hippocumpal cognitve map aggregation. 
+Alongside model implementations, the repository provides training, testing 
+and evaluation scripts plus dataloaders to reproduce the experiments that 
+explore this hardware–software approach.
 
 ---
 
 ## High-level structure
 
 - `*.py` (root): various training and utility scripts (examples: `mytrain_cl.py`, `mytest_cl.py`, `myeval_cl.py`).
- - `myeval_cl.py`: evaluation utilities and metrics (E-measure, S-measure, MAE, IoU, F-measure calculations and an evaluation runner that can write Excel reports).
 - `lib/`: model definitions and backbones (PraNet variants, Res2Net, UNet, ResNet implementations).
 - `utils/`: helper utilities and dataloaders. There are multiple dataloader variants to support different dataset organisations and continual-learning experiments.
 
@@ -31,7 +32,7 @@ Files of interest (non-exhaustive):
 The main methodological contribution in this repository is the HNN-style
 aggregation: a hippocampal-inspired mechanism that decays and aggregates per-
 task cognitive maps so the model retains an ordered, importance-weighted
-memory of prior tasks. HNN is implemented together with an EWC penalty to
+memory of prior tasks. HNN is implemented together with an regularization penalty to
 consolidate important parameters while allowing task-specific heads to remain
 plastic. Key ideas and implementation points:
 
@@ -40,17 +41,15 @@ plastic. Key ideas and implementation points:
   over the task's data) and stores them in a `fisher_dict` keyed by task.
 - When training subsequent tasks, an aggregated importance map called
   `cognitve_map_HNN` is constructed by decaying and summing previous Fisher
-  tensors. The decay is a function of task age (e.g., `decay = t - key`)—
+  tensors. The adjustment is a function of learning time (e.g., `decay = t - key`)—
   older tasks receive stronger attenuation. This models a hippocampal-like
   episodic memory with fading influence over time (order + importance).
 - The computed Fisher (either the immediate `fisher_information` or the
-  aggregated `cognitive_map_HNN`) is used by `cal_ewc_loss` to penalize
-  deviations of important parameters from their stored values. Task-specific
-  heads (reverse-attention modules) are typically excluded from EWC so
-  they remain plastic for new tasks.
+  aggregated `cognitive_map_HNN`) is used to penalize deviations of 
+  important parameters from their stored values. 
 
-This combination (per-task Fisher storage + decayed aggregation +
-selective EWC) is intended to capture the order and importance of past
+This combination (per-task Fisher storage + learning aggregation +
+selective adjustment) is intended to capture the order and importance of past
 learning episodes and to provide a practical consolidation mechanism for
 continual segmentation tasks.
 
