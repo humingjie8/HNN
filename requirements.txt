@@ -1,0 +1,40 @@
+# requirements generated from conda list (2026-01-15)
+# Note: For CUDA-enabled PyTorch, please install the correct wheel following
+# the official PyTorch instructions (see the note below).
+
+numpy==1.23.5
+scipy==1.10.1
+scikit-image==0.19.3
+scikit-learn==1.2.2
+pandas==1.5.3
+matplotlib==3.7.1
+pillow==9.4.0
+opencv-python==3.4.16.59
+imageio==2.28.1
+tqdm==4.65.0
+xlrd==2.0.1
+openpyxl==3.1.5
+seaborn==0.12.2
+
+# PyTorch / TorchVision / Torchaudio
+# If you use CUDA, install PyTorch with the appropriate CUDA tag according
+# to https://pytorch.org/get-started/previous-versions/
+# Example for CUDA 11.6 (from official index):
+# pip install --index-url https://download.pytorch.org/whl/cu116 torch==1.13.0 torchvision==0.14.0 torchaudio==0.13.0
+
+torch==1.13.0
+torchvision==0.14.0
+torchaudio==0.13.0
+
+# Optional / environment utilities
+jupyterlab
+ipykernel
+notebook
+
+# Extras used in repo
+pandas
+opencv-python
+scikit-image
+
+# If you need CuPy (present in conda env), install with the matching CUDA version via conda:
+# conda install -c conda-forge cupy

@@ -1,0 +1,9 @@
+*.pyc
+*.png
+*.pth
+*.txt
+*.xlsx
+*.csv
+*.rar
+*.pyc
+__pycache__/
