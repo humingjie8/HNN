@@ -15,10 +15,10 @@ explore this hardware–software approach.
 
 - `*.py` (root): various training and utility scripts (examples: `mytrain_cl.py`, `mytest_cl.py`, `myeval_cl.py`).
 - `lib/`: model definitions and backbones (PraNet variants, Res2Net, UNet, ResNet implementations).
-- `utils/`: helper utilities and dataloaders. There are multiple dataloader variants to support different dataset organisations and continual-learning experiments.
+- `utils/`: helper utilities and dataloaders.
 
 Files of interest (non-exhaustive):
-- `mytrain_cl.py`: training script. This repository contains `mytrain_cl.py` as the primary training entry; it implements EWC/HNN style logic.
+- `mytrain_cl.py`: training script. This repository contains `mytrain_cl.py` as the primary training entry; it implements EWC/HNN/BP style logic.
 - `mytest_cl.py`: inference/test script that handles multi-head outputs and saves maps/overlays.
 
 - `lib/PraNet_Res2Net_cl.py`: PraNet implementation adapted to support multiple task-specific reverse-attention heads for continual learning.
@@ -39,7 +39,7 @@ consolidate important parameters. Key ideas and implementation points:
 - When training subsequent tasks, an aggregated importance map called
   `cognitve_map_HNN` is constructed by selective adjusting and summing previous Fisher
   tensors. The adjustment is a function of learning time (e.g., `time = t - key`)—
-  older tasks receive stronger attenuation.It is designed to emulate the H-VO₂ devices in the circuit, which distinguish sequences via phase-shifted elastic relaxation of resistance states, and to use Fisher-based importance to model the  plastic retention observed when the circuit encounters multiple event pulses of different salience. This models a hippocampal-like episodic memory with fading influence over time (sequence + importance).
+  older tasks receive stronger attenuation. It is designed to emulate the H-VO₂ devices in the circuit, which distinguish sequences via phase-shifted elastic relaxation of resistance states, and to use Fisher-based importance to model the  plastic retention observed when the circuit encounters multiple event pulses of different importence. This models a hippocampal-like episodic memory with fading influence over time (sequence + importance).
 - The computed Fisher (either the immediate `fisher_information` in EWC or the
   aggregated `cognitive_map_HNN` in HNN) is used to penalize deviations of 
   important parameters from their stored values. 
