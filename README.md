@@ -3,9 +3,8 @@
 This repository implements PraNet-based polyp segmentation and introduces an
 Hippocampal Neural Network (HNN) continual-learning mechanism inspired by a
 Mott-VO2 hippocampus circuit. The code and algorithms were developed together
-with the hardware concept so that temporal device primitives (time-constants,
-selective decay, and continuous integration of inputs) are reflected in data
-flow, stored artifacts, and the hippocumpal cognitve map aggregation. 
+with the hardware concept so that device primitives (elastic-plastic response, and continuous integration of inputs) are reflected in data flow, stored artifacts, and the hippocumpal cognitve map aggregation. 
+
 Alongside model implementations, the repository provides training, testing 
 and evaluation scripts plus dataloaders to reproduce the experiments that 
 explore this hardware–software approach.
@@ -30,28 +29,24 @@ Files of interest (non-exhaustive):
 ## HNN (Hippocampal Neural Network) — primary contribution
 
 The main methodological contribution in this repository is the HNN-style
-aggregation: a hippocampal-inspired mechanism that decays and aggregates per-
-task cognitive maps so the model retains an ordered, importance-weighted
+aggregation: a hippocampal-inspired mechanism that selective adjusts and aggregates per-task cognitive maps so the model retains an ordered, importance-weighted
 memory of prior tasks. HNN is implemented together with an regularization penalty to
-consolidate important parameters while allowing task-specific heads to remain
-plastic. Key ideas and implementation points:
+consolidate important parameters. Key ideas and implementation points:
 
 - After finishing training on a task, the code computes diagonal
   approximations of the Fisher information (squared gradients averaged
   over the task's data) and stores them in a `fisher_dict` keyed by task.
 - When training subsequent tasks, an aggregated importance map called
-  `cognitve_map_HNN` is constructed by decaying and summing previous Fisher
-  tensors. The adjustment is a function of learning time (e.g., `decay = t - key`)—
-  older tasks receive stronger attenuation. This models a hippocampal-like
-  episodic memory with fading influence over time (order + importance).
-- The computed Fisher (either the immediate `fisher_information` or the
-  aggregated `cognitive_map_HNN`) is used to penalize deviations of 
+  `cognitve_map_HNN` is constructed by selective adjusting and summing previous Fisher
+  tensors. The adjustment is a function of learning time (e.g., `time = t - key`)—
+  older tasks receive stronger attenuation.It is designed to emulate the H-VO₂ devices in the circuit, which distinguish sequences via phase-shifted elastic relaxation of resistance states, and to use Fisher-based importance to model the  plastic retention observed when the circuit encounters multiple event pulses of different salience. This models a hippocampal-like episodic memory with fading influence over time (sequence + importance).
+- The computed Fisher (either the immediate `fisher_information` in EWC or the
+  aggregated `cognitive_map_HNN` in HNN) is used to penalize deviations of 
   important parameters from their stored values. 
 
 This combination (per-task Fisher storage + learning aggregation +
-selective adjustment) is intended to capture the order and importance of past
-learning episodes and to provide a practical consolidation mechanism for
-continual segmentation tasks.
+selective adjustment) is intended to capture the sequence and importance of past
+learning episodes, which is derived from hippocumpas circuit, and to provide a practical consolidation mechanism for continual segmentation tasks.
 
 
 ## Example commands

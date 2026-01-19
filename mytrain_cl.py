@@ -162,7 +162,7 @@ def cal_ewc_loss(model, model_old, fisher_information, lambda_ewc):
     ewc_loss = (lambda_ewc) * ewc_loss
     return ewc_loss
 
-def decay_tensor(ahh, tensor, method):
+def decay_tensor(time, tensor, method):
     """Decay tensor values to model memory fading across tasks.
 
     This helper scales a tensor of importance values (e.g., Fisher)
@@ -173,7 +173,7 @@ def decay_tensor(ahh, tensor, method):
     time.
 
     Parameters:
-        ahh (float or int): exponent that controls decay strength.
+        time (float or int): exponent that controls decay strength.
         tensor (torch.Tensor): importance tensor to decay.
         method (str): 'linear' or 'exponential' supported.
 
@@ -217,14 +217,14 @@ def decay_tensor(ahh, tensor, method):
         print(f"weights: {weights}")
     
     # compute decayed tensor
-    decayed_tensor = tensor * (weights ** ahh)
+    decayed_tensor = tensor * (weights ** time)
     
     if torch.isnan(decayed_tensor).any():
         print("NaN detected in decayed_tensor")
         print(f"decayed_tensor: {decayed_tensor}")
         print(f"tensor: {tensor}")
         print(f"weights: {weights}")
-        print(f"ahh: {ahh}")
+        print(f"time: {time}")
     
     return decayed_tensor
 
@@ -412,11 +412,11 @@ def train(data_loaders, model, optimizer, epoch):
                 for key2 in cognitive_map_HNN_mid.keys():
                     if cognitive_map_HNN_mid[key2] is not None:
                         # age of the saved Fisher (how many tasks since it was computed)
-                        decay = int(t - key)
+                        time = int(t - key)
                         # apply decay to simulate hippocampal fading of older
                         # episodic importance while preserving relative
                         # parameter importance within that episode
-                        cognitive_map_HNN_mid[key2] = decay_tensor(ahh=decay, tensor=cognitive_map_HNN_mid[key2], method='linear')
+                        cognitive_map_HNN_mid[key2] = decay_tensor(time=time, tensor=cognitive_map_HNN_mid[key2], method='linear')
                         # accumulate into the aggregated HNN Fisher map
                         cognitive_map_HNN[key2] += cognitive_map_HNN_mid[key2]
         # Update old
